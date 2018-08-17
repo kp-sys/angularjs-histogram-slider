@@ -1,0 +1,38 @@
+{
+    "name": "histogram-slider",
+    "version": "1.0.0",
+    "dependencies": {
+        "angular": "latest",
+        "angularjs-register": "github:DostalTomas/angularjs-register"
+    },
+    "devDependencies": {
+        "@babel/core": "latest",
+        "@types/angular": "latest",
+        "@types/node": "latest",
+        "babel-loader": "next",
+        "babel-plugin-angularjs-annotate": "latest",
+        "babel-preset-env": "next",
+        "html-loader": "latest",
+        "clean-webpack-plugin": "latest",
+        "css-loader": "latest",
+        "extract-text-webpack-plugin": "next",
+        "less": "latest",
+        "less-loader": "latest",
+        "pug-html-loader": "latest",
+        "style-loader": "latest",
+        "ngtemplate-loader": "latest",
+        "ts-loader": "latest",
+        "tslint": "latest",
+        "tslint-loader": "latest",
+        "typescript": "latest",
+        "webpack": "latest",
+        "webpack-cli": "latest",
+        "webpack-dev-server": "latest",
+        "html-webpack-plugin": "latest"
+    },
+    "scripts": {
+        "lib:prod": "webpack --config webpack.module.config.js --mode production",
+        "lib:devel": "webpack --config webpack.module.config.js --mode development --watch",
+        "demo": "webpack-dev-server --config webpack.demo.config.js"
+    }
+}

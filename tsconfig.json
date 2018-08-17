@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "esnext",
+        "sourceMap": true,
+        "allowJs": true,
+        "experimentalDecorators": true,
+        "baseUrl": "."
+    },
+    "exclude": [
+        "node_modules",
+        ".idea"
+    ]
+}
