@@ -13,4 +13,5 @@ html
 
 	body(ng-app="app")
 		main
-			histogram-slider
+			histogram-slider(ng-model="val")
+			div {{val | json}}

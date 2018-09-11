@@ -1,7 +1,7 @@
 .histogram-slider
 	.slider(ng-ref="$ctrl.sliderContainer")
 		.slider-line-background
-		button.anchor(ng-style="$ctrl.style", ng-mousedown="$ctrl.startMouseSlide($event)" ng-ref="$ctrl.setHandleNode")
+		button.anchor(ng-style="$ctrl.style", ng-mousedown="$ctrl.startMouseSlide($event)" ng-ref="$ctrl.setHandleNode" data-handle-key="0")
 		.slider-line-progress(style="width: 100%; left: 0")
 
-	div {{$ctrl.getPublicState() | json}}
+	div {{$ctrl.values | json}}
