@@ -92,7 +92,7 @@ abstract class HistogramSliderComponentController implements IComponentControlle
 
     public abstract onSliderDragEnd();
 
-    public abstract onValuesUpdated(values: number[]);
+    public abstract onValuesUpdated(object);
 
     public abstract getNextHandlePosition(handleIndex: number, percentPosition: number): number;
 
@@ -170,7 +170,7 @@ abstract class HistogramSliderComponentController implements IComponentControlle
         this.$scope.$applyAsync();
 
         if (this.onValuesUpdated) {
-            this.onValuesUpdated(this.values.slice());
+            this.onValuesUpdated({$values: this.values.slice()});
         }
 
         if (onAfterSet) {
@@ -330,7 +330,7 @@ abstract class HistogramSliderComponentController implements IComponentControlle
 /**
  * @ngdoc component
  * @name histogramSlider
- * @module histogramSlider
+ * @module histogram-slider
  *
  * @requires {ngModelController}
  *
@@ -344,7 +344,7 @@ abstract class HistogramSliderComponentController implements IComponentControlle
  * @param {function()=} onSliderDragStart
  * @param {function()=} onSliderDragMove
  * @param {function()=} onSliderDragEnd
- * @param {function(values: number[])=} onValuesUpdated
+ * @param {function($values: number[])=} onValuesUpdated
  * @param {function()=} onAfterSet
  * @param {function(handleIndex: number, percentPosition: number)=} getNextHandlePosition If you need to perform custom logic to postprocess the handle position, getNextHandlePosition accepts a callback of the form `(handleIdx: number, percentPosition: number) => number`.
  *                                                                                          Return the updated handle position. This is useful if you need to customize ranges within a single slider.
