@@ -28,17 +28,6 @@ interface Rect {
     top: number;
 }
 
-interface InternalState {
-    handlePos: number[];
-    values: number[];
-}
-
-interface PublicState {
-    min: number;
-    max: number;
-    values: number[];
-}
-
 export interface SliderAlgorithm {
     /**
      * Return percentage position os anchor
@@ -67,12 +56,9 @@ abstract class HistogramSliderComponentController implements IComponentControlle
     public snapPoints: number[];
 
     private ngModelController: INgModelController;
-
     private document: HTMLDocument;
     private sliderContainer: JQLite;
     private handleNode: Element;
-
-    private style: { top: string; position: string } | { left: string; position: string };
     private handleDimensions: number;
     private handlePositions: number[];
     private slidingIndex: number;
@@ -106,7 +92,7 @@ abstract class HistogramSliderComponentController implements IComponentControlle
 
     public abstract onSliderDragEnd();
 
-    public abstract onValuesUpdated(state?: PublicState);
+    public abstract onValuesUpdated(values: number[]);
 
     public abstract getNextHandlePosition(handleIndex: number, percentPosition: number): number;
 
@@ -123,14 +109,6 @@ abstract class HistogramSliderComponentController implements IComponentControlle
         }
 
         destroyEvent($event);
-    }
-
-    public getPublicState(): PublicState {
-        return {
-            max: this.max,
-            min: this.min,
-            values: this.values
-        };
     }
 
     private setStartSlide(event: MouseEvent) {
@@ -189,14 +167,10 @@ abstract class HistogramSliderComponentController implements IComponentControlle
 
         this.values = this.handlePositions.map((pos) => this.algorithm.getValue(pos, this.min, this.max));
 
-        this.$scope.$applyAsync(() => {
-            this.style = this.orientation === VERTICAL
-                ? {top: `${actualPosition}%`, position: 'absolute'}
-                : {left: `${actualPosition}%`, position: 'absolute'};
-        });
+        this.$scope.$applyAsync();
 
         if (this.onValuesUpdated) {
-            this.onValuesUpdated(this.getPublicState());
+            this.onValuesUpdated(this.values.slice());
         }
 
         if (onAfterSet) {
@@ -222,8 +196,6 @@ abstract class HistogramSliderComponentController implements IComponentControlle
             this.setModelValue();
         }
     }
-
-    /* --- */
 
     private getSliderBoundingBox(): Rect {
         const rect = this.sliderContainer[0].getBoundingClientRect();
@@ -326,6 +298,7 @@ abstract class HistogramSliderComponentController implements IComponentControlle
                 : PERCENT_EMPTY, // 0% is the lowest value
         );
     }
+
     // Apply user adjustments to position
     private userAdjustPosition(idx: number, proposedPosition: number): number {
 
@@ -354,6 +327,28 @@ abstract class HistogramSliderComponentController implements IComponentControlle
     }
 }
 
+/**
+ * @ngdoc component
+ * @name histogramSlider
+ * @module histogramSlider
+ *
+ * @requires {ngModelController}
+ *
+ * @param {number=} min Slider minimum value.
+ * @param {number=} max Slider maximum value.
+ * @param {string=} orientation Possible values are 'HORIZONTAL' or 'VERTICAL'.
+ * @param {SliderAlgorithm=} algorithm The algorithm, by default linear, the slider will use. Feel free to write your own as long as it conforms to the shape.
+ * @param {boolean=} snap Controls the slider's snapping behavior.
+ * @param {number[]=} snapPoints An array of values on the slider where the slider should snap to.
+ *
+ * @param {function()=} onSliderDragStart
+ * @param {function()=} onSliderDragMove
+ * @param {function()=} onSliderDragEnd
+ * @param {function(values: number[])=} onValuesUpdated
+ * @param {function()=} onAfterSet
+ * @param {function(handleIndex: number, percentPosition: number)=} getNextHandlePosition If you need to perform custom logic to postprocess the handle position, getNextHandlePosition accepts a callback of the form `(handleIdx: number, percentPosition: number) => number`.
+ *                                                                                          Return the updated handle position. This is useful if you need to customize ranges within a single slider.
+ */
 // tslint:disable-next-line
 export default class HistogramSliderComponent {
     public static componentName = 'histogramSlider';
