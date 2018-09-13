@@ -4,4 +4,7 @@ import register from 'angularjs-register';
 import histogramSliderModule from '../dist/histogram-slider';
 import '../dist/histogram-slider.css';
 
-register('app', [histogramSliderModule]);
+import DemoController from './demo.controller';
+
+register('app', [histogramSliderModule])
+    .controller('demoController', DemoController);

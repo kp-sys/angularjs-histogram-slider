@@ -12,7 +12,10 @@ html
 			}
 
 	body(ng-app="app")
-		main
-			histogram-slider(ng-model="val" on-values-updated="actualValue = $values")
+		main(ng-controller="demoController as dc")
+			input(type="number" ng-model="dc.sliderModel[0]")
+			input(type="number" ng-model="dc.sliderModel[1]")
+
+			histogram-slider(ng-model="dc.sliderModel" on-values-updated="actualValue = $values")
 			div Actual: {{actualValue | json}}
-			div Model: {{val | json}}
+			div Model: {{dc.sliderModel | json}}

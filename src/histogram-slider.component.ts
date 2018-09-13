@@ -84,6 +84,10 @@ abstract class HistogramSliderComponentController implements IComponentControlle
         this.handlePositions = this.values.map((value) => this.algorithm.getPosition(value, this.min, this.max));
         this.handleDimensions = 0;
         this.slidingIndex = null;
+
+        this.ngModelController.$render = () => {
+            this.updateNewValues(this.ngModelController.$viewValue);
+        };
     }
 
     public abstract onSliderDragStart();
@@ -109,6 +113,23 @@ abstract class HistogramSliderComponentController implements IComponentControlle
         }
 
         destroyEvent($event);
+    }
+
+    public getProgressStyle(idx: number) {
+        const value = this.handlePositions[idx];
+
+        if (idx === 0) {
+            return this.orientation === VERTICAL
+                ? {height: `${value}%`, top: 0}
+                : {left: 0, width: `${value}%`};
+        }
+
+        const prevValue = this.handlePositions[idx - 1];
+        const diffValue = value - prevValue;
+
+        return this.orientation === VERTICAL
+            ? {height: `${diffValue}%`, top: `${prevValue}%`}
+            : {left: `${prevValue}%`, width: `${diffValue}%`};
     }
 
     private setStartSlide(event: MouseEvent) {
@@ -275,9 +296,7 @@ abstract class HistogramSliderComponentController implements IComponentControlle
             : this.handleNode.clientWidth;
     }
 
-    // Make sure the proposed position respects the bounds and
-    // does not collide with other handles too much.
-
+    // Make sure the proposed position respects the bounds and does not collide with other handles too much.
     private validatePosition(idx: number, proposedPosition: number): number {
         const nextPosition = this.userAdjustPosition(idx, proposedPosition);
         const sliderBox = this.getSliderBoundingBox();
@@ -297,6 +316,18 @@ abstract class HistogramSliderComponentController implements IComponentControlle
                 ? this.handlePositions[idx - 1] + handlePercentage
                 : PERCENT_EMPTY, // 0% is the lowest value
         );
+    }
+
+    private validateValues(proposedValues): number[] {
+        return proposedValues.map((value, idx, values) => {
+            const realValue = Math.max(Math.min(value, this.max), this.min);
+
+            if (values.length && realValue < values[idx - 1]) {
+                return values[idx - 1];
+            }
+
+            return realValue;
+        });
     }
 
     // Apply user adjustments to position
@@ -324,6 +355,21 @@ abstract class HistogramSliderComponentController implements IComponentControlle
         }
 
         this.ngModelController.$setViewValue(this.values);
+    }
+
+    private updateNewValues(newValues: number[]) {
+        this.$log.log('Value update triggered');
+        // Don't update while the slider is sliding or newValues are undefined or null
+        if ((this.slidingIndex !== null) || (newValues === undefined || newValues === null || !Array.isArray(newValues))) {
+            return;
+        }
+
+        this.$log.log(newValues);
+
+        const nextValues = this.validateValues(newValues);
+
+        this.handlePositions = nextValues.map((value) => this.algorithm.getPosition(value, this.min, this.max));
+        this.values = nextValues;
     }
 }
 

@@ -19,6 +19,7 @@
         "less": "latest",
         "less-loader": "latest",
         "pug-html-loader": "latest",
+        "source-map-loader": "^0.2.4",
         "style-loader": "latest",
         "ngtemplate-loader": "latest",
         "ts-loader": "latest",
@@ -31,8 +32,8 @@
         "html-webpack-plugin": "latest"
     },
     "scripts": {
-        "lib:prod": "webpack --config webpack.module.config.js --mode production",
-        "lib:devel": "webpack --config webpack.module.config.js --mode development --watch",
-        "demo": "webpack-dev-server --config webpack.demo.config.js"
+        "lib:prod": "webpack --config webpack.module.config.js --mode production --progress",
+        "lib:devel": "webpack --config webpack.module.config.js --mode development --watch --progress",
+        "demo": "webpack-dev-server --config webpack.demo.config.js --progress"
     }
 }

@@ -18,13 +18,19 @@ module.exports = {
         rules: [
             {
                 enforce: 'pre',
+                test: /\.js$/,
+                include: [/dist/],
+                loader: 'source-map-loader'
+            },
+            {
+                enforce: 'pre',
                 test: /\.ts$/,
-                include: [/src/],
+                include: [/demo/, /dist/],
                 loader: 'tslint-loader'
             },
             {
                 test: /\.ts$/,
-                include: [/src/],
+                include: [/demo/, /dist/],
                 use: [
                     {
                         loader: 'babel-loader',

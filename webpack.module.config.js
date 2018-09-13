@@ -13,8 +13,7 @@ module.exports = {
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].js',
         library: 'HistogramSlider',
-        libraryTarget: 'umd',
-        libraryExport: 'default'
+        libraryTarget: 'umd'
     },
 
     externals: {
