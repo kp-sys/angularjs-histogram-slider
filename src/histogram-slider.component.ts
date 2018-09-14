@@ -5,6 +5,8 @@ import {
     IComponentController,
     IDocumentService,
     INgModelController,
+    IOnChanges,
+    IOnChangesObject,
     IPostLink,
     IScope
 } from 'angular';
@@ -38,6 +40,8 @@ export interface SliderAlgorithm {
     getValue(pos: number, min: number, max: number): number;
 }
 
+const HANDLE_SET_EVENT = 'handleSet';
+
 function getHandleFor(event: MouseEvent) {
     return Number((event.currentTarget as Element).getAttribute('data-handle-key'));
 }
@@ -47,7 +51,7 @@ function destroyEvent(event: Event) {
     event.preventDefault();
 }
 
-export abstract class HistogramSliderComponentController implements IComponentController, IPostLink {
+export abstract class HistogramSliderComponentController implements IComponentController, IPostLink, IOnChanges {
     public min: number;
     public max: number;
     public values: number[];
@@ -55,7 +59,8 @@ export abstract class HistogramSliderComponentController implements IComponentCo
     public algorithm: SliderAlgorithm;
     public snap: boolean;
     public snapPoints: number[];
-
+    public pitStyleCache: Array<{ top?: string, left?: string, position: string }>;
+    public pitPoints: number[];
     private ngModelController: INgModelController;
     private document: HTMLDocument;
     private sliderContainer: JQLite;
@@ -72,10 +77,10 @@ export abstract class HistogramSliderComponentController implements IComponentCo
 
     public set setHandleNode(value: IAugmentedJQuery) {
         this.handleNode = value[0];
+        this.$scope.$emit(HANDLE_SET_EVENT);
     }
 
     public $postLink(): void {
-
         this.min = this.min || 0;
         this.max = this.max || 100;
         this.values = this.values || [0];
@@ -86,6 +91,19 @@ export abstract class HistogramSliderComponentController implements IComponentCo
         this.handlePositions = this.values.map((value) => this.algorithm.getPosition(value, this.min, this.max));
         this.handleDimensions = 0;
         this.slidingIndex = null;
+
+        const unregisterEvent = this.$scope.$on(HANDLE_SET_EVENT, () => {
+            if (this.pitPoints) {
+                this.fillPitPointsCache();
+            }
+            unregisterEvent();
+        });
+    }
+
+    public $onChanges(onChangesObj: IOnChangesObject): void {
+        if (onChangesObj.pitPoints && onChangesObj.pitPoints.currentValue && !onChangesObj.pitPoints.isFirstChange()) {
+            this.fillPitPointsCache();
+        }
     }
 
     public abstract onSliderDragStart();
@@ -160,7 +178,7 @@ export abstract class HistogramSliderComponentController implements IComponentCo
     private setStartSlide(event: MouseEvent) {
         // const sliderBox = this.getSliderBoundingBox();
 
-        this.handleDimensions = this.getHandleDimensions();
+        this.handleDimensions = this.getHandleDimension();
         this.slidingIndex = getHandleFor(event);
     }
 
@@ -223,8 +241,6 @@ export abstract class HistogramSliderComponentController implements IComponentCo
     }
 
     private endSlide() {
-        this.slidingIndex = null;
-
         document.removeEventListener('mouseup', this.endSlide, false);
         document.removeEventListener('touchend', this.endSlide, false);
         document.removeEventListener('touchmove', this.handleTouchSlide, false);
@@ -239,6 +255,8 @@ export abstract class HistogramSliderComponentController implements IComponentCo
         } else {
             this.setModelValue();
         }
+
+        this.slidingIndex = null;
     }
 
     private getSliderBoundingBox(): Rect {
@@ -259,17 +277,18 @@ export abstract class HistogramSliderComponentController implements IComponentCo
 
         const value = this.algorithm.getValue(positionPercent, this.min, this.max);
         const snapValue = this.getClosestSnapPoint(value);
+
         return this.algorithm.getPosition(snapValue, this.min, this.max);
     }
 
     private getClosestSnapPoint(value) {
-        if (!this.snapPoints.length) {
+        if (!this.snapPoints || !this.snapPoints.length) {
             return value;
         }
 
-        return this.snapPoints.reduce((snapTo, snap) => (
+        return this.snapPoints.reduce((snapTo, snap) =>
             Math.abs(snapTo - value) < Math.abs(snap - value) ? snapTo : snap
-        ));
+        );
     }
 
     private positionPercent(x: number, y: number, sliderBox: Rect): number {
@@ -313,7 +332,7 @@ export abstract class HistogramSliderComponentController implements IComponentCo
         return proposedPosition >= prevHandlePosition;
     }
 
-    private getHandleDimensions() {
+    private getHandleDimension(): number {
         if (!this.handleNode) {
             return 0;
         }
@@ -391,6 +410,16 @@ export abstract class HistogramSliderComponentController implements IComponentCo
 
         this.ngModelController.$setViewValue(this.values);
     }
+
+    private fillPitPointsCache() {
+        this.pitStyleCache = this.pitPoints.map((point) => {
+            const position = this.algorithm.getPosition(point, this.min, this.max);
+
+            return this.orientation === VERTICAL
+                ? {top: `${position}%`, left: `${this.getHandleDimension() / 2}px`, position: 'absolute'}
+                : {left: `${position}%`, top: `${this.getHandleDimension() / 2}px`, position: 'absolute'};
+        });
+    }
 }
 
 /**
@@ -406,6 +435,7 @@ export abstract class HistogramSliderComponentController implements IComponentCo
  * @param {SliderAlgorithm=} algorithm The algorithm, by default linear, the slider will use. Feel free to write your own as long as it conforms to the shape.
  * @param {boolean=} snap Controls the slider's snapping behavior.
  * @param {number[]=} snapPoints An array of values on the slider where the slider should snap to.
+ * @param {number[]} pitPoints As the set of points at which it will render a pit. Points are an array of values on the slider.
  *
  * @param {function()=} onSliderDragStart
  * @param {function()=} onSliderDragMove
@@ -428,12 +458,13 @@ export default class HistogramSliderComponent {
     };
 
     public bindings = {
-        min: '@?',
-        max: '@?',
+        min: '<?',
+        max: '<?',
         orientation: '@?',
         algorithm: '<?',
-        snap: '@?',
-        snapPoints: '@?',
+        snap: '<?',
+        snapPoints: '<?',
+        pitPoints: '<?',
 
         onSliderDragStart: '&?',
         onSliderDragMove: '&?',
