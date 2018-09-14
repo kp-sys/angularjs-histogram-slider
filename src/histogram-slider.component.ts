@@ -106,6 +106,8 @@ export abstract class HistogramSliderComponentController implements IComponentCo
         }
     }
 
+    public abstract onClick();
+
     public abstract onSliderDragStart();
 
     public abstract onSliderDragMove();
@@ -173,6 +175,33 @@ export abstract class HistogramSliderComponentController implements IComponentCo
         this.values = nextValues;
 
         this.onValuesUpdated({$values: this.values.slice()});
+    }
+
+    public handleClick(event: MouseEvent) {
+        if ((event.target as Element).getAttribute('data-handle-key')) {
+            return;
+        }
+
+        // Calculate the position of the slider on the page so we can determine
+        // the position where you click in relativity.
+        const sliderBox = this.getSliderBoundingBox();
+
+        const positionDecimal = this.orientation === VERTICAL
+            ? (event.clientY - sliderBox.top) / sliderBox.height
+            : (event.clientX - sliderBox.left) / sliderBox.width;
+
+        const positionPercent = positionDecimal * PERCENT_FULL;
+
+        const handleId = this.getClosestHandle(positionPercent);
+
+        const validPositionPercent = this.getSnapPosition(positionPercent);
+
+        // Move the handle there
+        this.slideTo(handleId, validPositionPercent, () => this.setModelValue());
+
+        if (this.onClick) {
+            this.onClick();
+        }
     }
 
     private setStartSlide(event: MouseEvent) {
@@ -257,6 +286,15 @@ export abstract class HistogramSliderComponentController implements IComponentCo
         }
 
         this.slidingIndex = null;
+    }
+
+    private getClosestHandle(positionPercent: number): number {
+        return this.handlePositions.reduce((closestIdx, node, idx) => {
+            const challenger = Math.abs(this.handlePositions[idx] - positionPercent);
+            const current = Math.abs(this.handlePositions[closestIdx] - positionPercent);
+
+            return challenger < current ? idx : closestIdx;
+        }, 0);
     }
 
     private getSliderBoundingBox(): Rect {
@@ -466,6 +504,7 @@ export default class HistogramSliderComponent {
         snapPoints: '<?',
         pitPoints: '<?',
 
+        onClick: '&?',
         onSliderDragStart: '&?',
         onSliderDragMove: '&?',
         onSliderDragEnd: '&?',

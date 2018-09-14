@@ -1,9 +1,9 @@
 .histogram-slider
 	.slider
-		.slider-line-background
+		.slider-line-background(ng-click="$ctrl.handleClick($event)")
 		div(ng-ref="$ctrl.sliderContainer")
-			button.anchor(ng-repeat="handlePosition in $ctrl.handlePositions track by $index" ng-style="{left: handlePosition + '%', position: 'absolute'}", ng-mousedown="$ctrl.startMouseSlide($event)" ng-ref="$ctrl.setHandleNode" data-handle-key="{{$index}}")
-		.slider-line-progress(ng-repeat="x in $ctrl.handlePositions track by $index" ng-if="!($index === 0 && $ctrl.handlePositions.length > 1)" ng-style="$ctrl.getProgressStyle($index)")
+			button.handle(ng-repeat="handlePosition in $ctrl.handlePositions track by $index" ng-style="{left: handlePosition + '%', position: 'absolute'}", ng-mousedown="$ctrl.startMouseSlide($event)" ng-ref="$ctrl.setHandleNode" data-handle-key="{{$index}}")
+		.slider-line-progress(ng-click="$ctrl.handleClick($event)" ng-repeat="x in $ctrl.handlePositions track by $index" ng-if="!($index === 0 && $ctrl.handlePositions.length > 1)" ng-style="$ctrl.getProgressStyle($index)")
 		.pit(ng-repeat="pitPoint in $ctrl.pitPoints track by $index" ng-style="$ctrl.pitStyleCache[$index]")
 			.pit-centering-wrapper
 				.pit-centering-content {{pitPoint}}
