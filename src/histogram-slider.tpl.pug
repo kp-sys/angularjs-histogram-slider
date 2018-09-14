@@ -4,3 +4,4 @@
 		div(ng-ref="$ctrl.sliderContainer")
 			button.anchor(ng-repeat="handlePosition in $ctrl.handlePositions track by $index" ng-style="{left: handlePosition + '%', position: 'absolute'}", ng-mousedown="$ctrl.startMouseSlide($event)" ng-ref="$ctrl.setHandleNode" data-handle-key="{{$index}}")
 		.slider-line-progress(ng-repeat="x in $ctrl.handlePositions track by $index" ng-if="!($index === 0 && $ctrl.handlePositions.length > 1)" ng-style="$ctrl.getProgressStyle($index)")
+ng-transclude

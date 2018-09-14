@@ -12,10 +12,15 @@ html
 			}
 
 	body(ng-app="app")
-		main(ng-controller="demoController as dc")
-			input(type="number" ng-model="dc.sliderModel[0]")
-			input(type="number" ng-model="dc.sliderModel[1]")
+		main(ng-controller="demoController as dc" ng-init="numberOfHandlers = 1")
+			label Number of handlers:
+				input(type="number" min="1" max="5" ng-model="numberOfHandlers")
 
-			histogram-slider(ng-model="dc.sliderModel" on-values-updated="actualValue = $values")
+			label(ng-repeat="i in numberOfHandlers | range") Handle {{$index + 1}} value:
+				input(type="number" ng-model="sliderModel[$index]")
+
+			histogram-slider(ng-model="sliderModel" on-values-updated="actualValue = $values")
+				histogram-slider-model(ng-repeat="i in numberOfHandlers | range" ng-model="sliderModel[$index]")
+
 			div Actual: {{actualValue | json}}
-			div Model: {{dc.sliderModel | json}}
+			div Model: {{sliderModel | json}}

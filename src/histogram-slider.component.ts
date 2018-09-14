@@ -10,15 +10,7 @@ import {
 } from 'angular';
 import {HORIZONTAL, PERCENT_EMPTY, PERCENT_FULL, VERTICAL} from './histogram-slider.constants';
 import LinearAlgorithm from './algorithms/linear';
-
-function getHandleFor(event: MouseEvent) {
-    return Number((event.currentTarget as Element).getAttribute('data-handle-key'));
-}
-
-function destroyEvent(event: Event) {
-    event.stopPropagation();
-    event.preventDefault();
-}
+import {HistogramSliderModelComponentController} from './histogram-slider-model.component';
 
 interface Rect {
     height: number;
@@ -46,7 +38,16 @@ export interface SliderAlgorithm {
     getValue(pos: number, min: number, max: number): number;
 }
 
-abstract class HistogramSliderComponentController implements IComponentController, IPostLink {
+function getHandleFor(event: MouseEvent) {
+    return Number((event.currentTarget as Element).getAttribute('data-handle-key'));
+}
+
+function destroyEvent(event: Event) {
+    event.stopPropagation();
+    event.preventDefault();
+}
+
+export abstract class HistogramSliderComponentController implements IComponentController, IPostLink {
     public min: number;
     public max: number;
     public values: number[];
@@ -62,6 +63,7 @@ abstract class HistogramSliderComponentController implements IComponentControlle
     private handleDimensions: number;
     private handlePositions: number[];
     private slidingIndex: number;
+    private sliderModelControllers: [HistogramSliderModelComponentController];
 
     /*@ngInject*/
     constructor($document: IDocumentService, private $attrs: IAttributes, private $scope: IScope, private $log) {
@@ -76,7 +78,7 @@ abstract class HistogramSliderComponentController implements IComponentControlle
 
         this.min = this.min || 0;
         this.max = this.max || 100;
-        this.values = this.values || [10, 90];
+        this.values = this.values || [0];
 
         this.orientation = this.orientation || HORIZONTAL;
         this.algorithm = this.algorithm || new LinearAlgorithm();
@@ -84,10 +86,6 @@ abstract class HistogramSliderComponentController implements IComponentControlle
         this.handlePositions = this.values.map((value) => this.algorithm.getPosition(value, this.min, this.max));
         this.handleDimensions = 0;
         this.slidingIndex = null;
-
-        this.ngModelController.$render = () => {
-            this.updateNewValues(this.ngModelController.$viewValue);
-        };
     }
 
     public abstract onSliderDragStart();
@@ -99,8 +97,6 @@ abstract class HistogramSliderComponentController implements IComponentControlle
     public abstract onValuesUpdated(object);
 
     public abstract getNextHandlePosition(handleIndex: number, percentPosition: number): number;
-
-    /* -------------------------- */
 
     public startMouseSlide($event: MouseEvent) {
         this.setStartSlide($event);
@@ -132,13 +128,40 @@ abstract class HistogramSliderComponentController implements IComponentControlle
             : {left: `${prevValue}%`, width: `${diffValue}%`};
     }
 
+    public addHandler(sliderModelController: HistogramSliderModelComponentController): number {
+        if (!this.sliderModelControllers) {
+            this.sliderModelControllers = [sliderModelController];
+            this.values = [0];
+        } else {
+            this.sliderModelControllers.push(sliderModelController);
+            this.values.push(0);
+        }
+
+        return this.sliderModelControllers.length - 1;
+    }
+
+    public updateNewValue(index: number, newValue: number) {
+        // Don't update while the slider is sliding or newValues are undefined or null
+        if ((this.slidingIndex !== null) || (newValue === undefined || newValue === null)) {
+            return;
+        }
+
+        const newValues = this.values.slice();
+        newValues[index] = newValue;
+
+        const nextValues = this.validateValues(newValues);
+
+        this.handlePositions = nextValues.map((value) => this.algorithm.getPosition(value, this.min, this.max));
+        this.values = nextValues;
+
+        this.onValuesUpdated({$values: this.values.slice()});
+    }
+
     private setStartSlide(event: MouseEvent) {
         // const sliderBox = this.getSliderBoundingBox();
 
         this.handleDimensions = this.getHandleDimensions();
         this.slidingIndex = getHandleFor(event);
-
-        this.$log.log(this.slidingIndex);
     }
 
     private handleMouseSlide(event: MouseEvent) {
@@ -256,7 +279,11 @@ abstract class HistogramSliderComponentController implements IComponentControlle
         return ((x - sliderBox.left) / sliderBox.width) * PERCENT_FULL;
     }
 
-    // Can we move the slider to the given position?
+    /**
+     * Can we move the slider to the given position?
+     * @param idx
+     * @param proposedPosition
+     */
     private canMove(idx: number, proposedPosition: number): boolean {
         const sliderBox = this.getSliderBoundingBox();
 
@@ -296,7 +323,11 @@ abstract class HistogramSliderComponentController implements IComponentControlle
             : this.handleNode.clientWidth;
     }
 
-    // Make sure the proposed position respects the bounds and does not collide with other handles too much.
+    /**
+     * Make sure the proposed position respects the bounds and does not collide with other handles too much.
+     * @param idx
+     * @param proposedPosition
+     */
     private validatePosition(idx: number, proposedPosition: number): number {
         const nextPosition = this.userAdjustPosition(idx, proposedPosition);
         const sliderBox = this.getSliderBoundingBox();
@@ -318,7 +349,7 @@ abstract class HistogramSliderComponentController implements IComponentControlle
         );
     }
 
-    private validateValues(proposedValues): number[] {
+    private validateValues(proposedValues: number[]): number[] {
         return proposedValues.map((value, idx, values) => {
             const realValue = Math.max(Math.min(value, this.max), this.min);
 
@@ -330,7 +361,11 @@ abstract class HistogramSliderComponentController implements IComponentControlle
         });
     }
 
-    // Apply user adjustments to position
+    /**
+     * Apply user adjustments to position
+     * @param idx
+     * @param proposedPosition
+     */
     private userAdjustPosition(idx: number, proposedPosition: number): number {
 
         let nextPosition = proposedPosition;
@@ -355,21 +390,6 @@ abstract class HistogramSliderComponentController implements IComponentControlle
         }
 
         this.ngModelController.$setViewValue(this.values);
-    }
-
-    private updateNewValues(newValues: number[]) {
-        this.$log.log('Value update triggered');
-        // Don't update while the slider is sliding or newValues are undefined or null
-        if ((this.slidingIndex !== null) || (newValues === undefined || newValues === null || !Array.isArray(newValues))) {
-            return;
-        }
-
-        this.$log.log(newValues);
-
-        const nextValues = this.validateValues(newValues);
-
-        this.handlePositions = nextValues.map((value) => this.algorithm.getPosition(value, this.min, this.max));
-        this.values = nextValues;
     }
 }
 
@@ -401,9 +421,10 @@ export default class HistogramSliderComponent {
 
     public templateUrl = require('./histogram-slider.tpl.pug');
     public controller = HistogramSliderComponentController;
+    public transclude = true;
 
     public require = {
-        ngModelController: 'ngModel'
+        ngModelController: '?ngModel'
     };
 
     public bindings = {
