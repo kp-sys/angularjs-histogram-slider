@@ -81,9 +81,9 @@ export abstract class HistogramSliderComponentController implements IComponentCo
     }
 
     public $postLink(): void {
-        this.min = this.min || 0;
+        this.min = this.min || 1;
         this.max = this.max || 100;
-        this.values = this.values || [0];
+        this.values = this.values || [1];
 
         this.orientation = this.orientation || HORIZONTAL;
         this.algorithm = this.algorithm || new LinearAlgorithm();
