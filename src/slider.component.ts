@@ -1,4 +1,4 @@
-import './histogram-slider.less';
+import './slider.less';
 import {
     IAttributes,
     IAugmentedJQuery,
@@ -10,9 +10,9 @@ import {
     IPostLink,
     IScope
 } from 'angular';
-import {HORIZONTAL, PERCENT_EMPTY, PERCENT_FULL, VERTICAL} from './histogram-slider.constants';
+import {HORIZONTAL, PERCENT_EMPTY, PERCENT_FULL, VERTICAL} from './slider.constants';
 import LinearAlgorithm from './algorithms/linear';
-import {HistogramSliderModelComponentController} from './histogram-slider-model.component';
+import {SliderModelComponentController} from './slider-model.component';
 
 interface Rect {
     height: number;
@@ -51,7 +51,7 @@ function destroyEvent(event: Event) {
     event.preventDefault();
 }
 
-export abstract class HistogramSliderComponentController implements IComponentController, IPostLink, IOnChanges {
+export abstract class SliderComponentController implements IComponentController, IPostLink, IOnChanges {
     public min: number;
     public max: number;
     public values: number[];
@@ -68,7 +68,7 @@ export abstract class HistogramSliderComponentController implements IComponentCo
     private handleDimensions: number;
     private handlePositions: number[];
     private slidingIndex: number;
-    private sliderModelControllers: [HistogramSliderModelComponentController];
+    private sliderModelControllers: [SliderModelComponentController];
 
     /*@ngInject*/
     constructor($document: IDocumentService, private $attrs: IAttributes, private $scope: IScope, private $log) {
@@ -148,7 +148,7 @@ export abstract class HistogramSliderComponentController implements IComponentCo
             : {left: `${prevValue}%`, width: `${diffValue}%`};
     }
 
-    public addHandler(sliderModelController: HistogramSliderModelComponentController): number {
+    public addHandler(sliderModelController: SliderModelComponentController): number {
         if (!this.sliderModelControllers) {
             this.sliderModelControllers = [sliderModelController];
             this.values = [0];
@@ -462,8 +462,8 @@ export abstract class HistogramSliderComponentController implements IComponentCo
 
 /**
  * @ngdoc component
- * @name histogramSlider
- * @module histogram-slider
+ * @name slider
+ * @module slider
  *
  * @requires {ngModelController}
  *
@@ -484,11 +484,11 @@ export abstract class HistogramSliderComponentController implements IComponentCo
  *                                                                                          Return the updated handle position. This is useful if you need to customize ranges within a single slider.
  */
 // tslint:disable-next-line
-export default class HistogramSliderComponent {
-    public static componentName = 'histogramSlider';
+export default class SliderComponent {
+    public static componentName = 'slider';
 
-    public templateUrl = require('./histogram-slider.tpl.pug');
-    public controller = HistogramSliderComponentController;
+    public templateUrl = require('./slider.tpl.pug');
+    public controller = SliderComponentController;
     public transclude = true;
 
     public require = {

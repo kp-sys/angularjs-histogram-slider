@@ -6,13 +6,13 @@ module.exports = {
     mode: 'none',
 
     entry: {
-        'histogram-slider': ['./src/histogram-slider.module.ts']
+        'slider': ['./src/slider.module.ts']
     },
 
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].js',
-        library: 'HistogramSlider',
+        library: 'Slider',
         libraryTarget: 'umd'
     },
 

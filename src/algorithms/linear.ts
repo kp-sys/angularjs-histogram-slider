@@ -1,4 +1,4 @@
-import {SliderAlgorithm} from '../histogram-slider.component';
+import {SliderAlgorithm} from '../slider.component';
 
 export default class LinearAlgorithm implements SliderAlgorithm {
 

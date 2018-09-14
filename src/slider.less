@@ -1,0 +1,54 @@
+@background-color: #c7c7c7;
+@background-color-active: #0B6AFF;
+
+.slider {
+    height: 24px;
+    overflow: visible;
+    margin: 24px 12px;
+    position: relative;
+
+    .slider-line-background {
+        height: 4px;
+        width: 100%;
+        top: 0;
+        position: relative;
+        background-color: @background-color;
+        cursor: pointer;
+    }
+
+    .slider-line-progress {
+        position: absolute;
+        background-color: @background-color-active;
+        height: 4px;
+        top: 0;
+        cursor: pointer;
+    }
+
+    .handle {
+        border: 1px solid #9a9a9a;
+        background-color: #fff;
+        border-radius: 50%;
+        height: 24px;
+        outline: none;
+        z-index: 2;
+        width: 24px;
+        cursor: pointer;
+        margin-left: -12px;
+        top: -10px;
+        position: absolute;
+    }
+
+    .pit {
+        padding-top: 3px;
+
+        .pit-centering-wrapper {
+            position: absolute;
+            left: 50%;
+
+            .pit-centering-content {
+                position: relative;
+                left: -50%;
+            }
+        }
+    }
+}

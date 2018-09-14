@@ -2,7 +2,7 @@ doctype html
 
 html
 	head
-		title Histogram-slider Demo
+		title Slider Demo
 		style(type="text/css").
 			main {
 				border: 1px solid black;
@@ -19,13 +19,13 @@ html
 			label(ng-repeat="i in numberOfHandlers | range") Handle {{$index + 1}} value:
 				input(type="number" ng-model="sliderModel[$index]")
 
-			histogram-slider(ng-model="sliderModel"
+			slider(ng-model="sliderModel"
 			on-values-updated="actualValue = $values"
 			pit-points="[1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]"
 			snap="true"
 			snap-points="[1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]")
 
-				histogram-slider-model(ng-repeat="i in numberOfHandlers | range" ng-model="sliderModel[$index]")
+				slider-model(ng-repeat="i in numberOfHandlers | range" ng-model="sliderModel[$index]")
 
 			div Actual: {{actualValue | json}}
 			div Model: {{sliderModel | json}}

@@ -1,4 +1,4 @@
-import {SliderAlgorithm} from '../histogram-slider.component';
+import {SliderAlgorithm} from '../slider.component';
 
 export default class Log10Algorithm implements SliderAlgorithm {
     public getPosition(value, min, max) {
