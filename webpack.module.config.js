@@ -6,7 +6,7 @@ module.exports = {
     mode: 'none',
 
     entry: {
-        'slider': ['./src/slider.module.ts']
+        'slider': ['./src/slider/slider.module.ts']
     },
 
     output: {

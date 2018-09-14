@@ -1,4 +1,4 @@
-import {SliderAlgorithm} from '../slider.component';
+import {SliderAlgorithm} from './slider-algorithm.interface';
 
 export default class Log10Algorithm implements SliderAlgorithm {
     public getPosition(value, min, max) {

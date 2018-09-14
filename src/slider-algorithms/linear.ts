@@ -1,4 +1,4 @@
-import {SliderAlgorithm} from '../slider.component';
+import {SliderAlgorithm} from './slider-algorithm.interface';
 
 export default class LinearAlgorithm implements SliderAlgorithm {
 

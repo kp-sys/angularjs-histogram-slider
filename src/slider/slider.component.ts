@@ -11,8 +11,9 @@ import {
     IScope
 } from 'angular';
 import {HORIZONTAL, PERCENT_EMPTY, PERCENT_FULL, VERTICAL} from './slider.constants';
-import LinearAlgorithm from './algorithms/linear';
 import {SliderModelComponentController} from './slider-model.component';
+import LinearAlgorithm from '../slider-algorithms/linear';
+import {SliderAlgorithm} from '../slider-algorithms/slider-algorithm.interface';
 
 interface Rect {
     height: number;
@@ -20,24 +21,6 @@ interface Rect {
     left: number;
     right: number;
     top: number;
-}
-
-export interface SliderAlgorithm {
-    /**
-     * Return percentage position os anchor
-     * @param value Real value
-     * @param min
-     * @param max
-     */
-    getPosition(value: number, min: number, max: number): number;
-
-    /**
-     * Return real value from position
-     * @param pos Percentage position of anchor
-     * @param min
-     * @param max
-     */
-    getValue(pos: number, min: number, max: number): number;
 }
 
 const HANDLE_SET_EVENT = 'handleSet';
