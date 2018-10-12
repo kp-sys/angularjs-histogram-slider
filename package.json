@@ -1,10 +1,12 @@
 {
-    "name": "histogram-slider",
+    "name": "angularjs-histogram-slider",
     "version": "1.0.0",
+    "repository": "https://github.com/DostalTomas/angularjs-histogram-slider.git",
     "dependencies": {
         "angular": "latest",
         "angularjs-register": "github:DostalTomas/angularjs-register"
     },
+    "license": "MIT",
     "devDependencies": {
         "@babel/core": "latest",
         "@types/angular": "latest",
