@@ -19,14 +19,14 @@ html
 			label(ng-repeat="i in numberOfHandlers | range") Handle {{$index + 1}} value:
 				input(type="number" ng-model="sliderModel[$index]")
 
-			slider(ng-model="sliderModel"
+			td-slider(ng-model="sliderModel"
 			ng-change="dc.change()"
 			on-values-updated="actualValue = $values"
 			pit-points="[1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]"
 			snap="true"
 			snap-points="[1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]")
 
-				slider-model(ng-repeat="i in numberOfHandlers | range" ng-model="sliderModel[$index]")
+				td-slider-model(ng-repeat="i in numberOfHandlers | range" ng-model="sliderModel[$index]")
 
 			div Actual: {{actualValue | json}}
 			div Model: {{sliderModel | json}}

@@ -18,15 +18,15 @@ export class SliderModelComponentController implements IPostLink {
 
 /**
  * @ngdoc component
- * @name sliderModel
- * @module slider
+ * @name tdSliderModel
+ * @module td.slider
  *
  * @requires {ngModel}
- * @requires {^slider}
+ * @requires {^tdSlider}
  */
 // tslint:disable-next-line
 export default class SliderModelComponent {
-    public static componentName = 'sliderModel';
+    public static componentName = 'tdSliderModel';
 
     public require = {
         ngModelController: 'ngModel',

@@ -446,8 +446,8 @@ export abstract class SliderComponentController implements IComponentController,
 
 /**
  * @ngdoc component
- * @name slider
- * @module slider
+ * @name td-slider
+ * @module td.slider
  *
  * @requires {ngModelController}
  *
@@ -470,7 +470,7 @@ export abstract class SliderComponentController implements IComponentController,
  */
 // tslint:disable-next-line
 export default class SliderComponent {
-    public static componentName = 'slider';
+    public static componentName = 'tdSlider';
 
     public templateUrl = require('./slider.tpl.pug');
     public controller = SliderComponentController;
