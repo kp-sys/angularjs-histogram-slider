@@ -52,10 +52,14 @@ export abstract class SliderComponentController implements IComponentController,
     private handlePositions: number[];
     private slidingIndex: number;
     private sliderModelControllers: [SliderModelComponentController];
+    private endSlideListener: () => void;
+    private handleMouseSlideListener: (event) => void;
 
     /*@ngInject*/
     constructor($document: IDocumentService, private $attrs: IAttributes, private $scope: IScope, private $log) {
         this.document = $document[0];
+        this.endSlideListener = () => this.endSlide();
+        this.handleMouseSlideListener = (event) => this.handleMouseSlide(event);
     }
 
     public set setHandleNode(value: IAugmentedJQuery) {
@@ -104,8 +108,8 @@ export abstract class SliderComponentController implements IComponentController,
     public startMouseSlide($event: MouseEvent) {
         this.setStartSlide($event);
 
-        this.document.addEventListener('mousemove', this.handleMouseSlide.bind(this), false);
-        this.document.addEventListener('mouseup', this.endSlide.bind(this), false);
+        this.document.addEventListener('mouseup', this.endSlideListener, false);
+        this.document.addEventListener('mousemove', this.handleMouseSlideListener, false);
 
         if (this.onSliderDragStart) {
             this.onSliderDragStart();
@@ -253,10 +257,11 @@ export abstract class SliderComponentController implements IComponentController,
     }
 
     private endSlide() {
-        document.removeEventListener('mouseup', this.endSlide, false);
-        document.removeEventListener('touchend', this.endSlide, false);
-        document.removeEventListener('touchmove', this.handleTouchSlide, false);
-        document.removeEventListener('mousemove', this.handleMouseSlide, false);
+        document.removeEventListener('mouseup', this.endSlideListener, false);
+        document.removeEventListener('mousemove', this.handleMouseSlideListener, false);
+
+        document.removeEventListener('touchend', this.endSlideListener, false);
+        document.removeEventListener('touchmove', this.handleMouseSlideListener, false);
 
         if (this.onSliderDragEnd) {
             this.onSliderDragEnd();
@@ -425,10 +430,6 @@ export abstract class SliderComponentController implements IComponentController,
     }
 
     private setModelValue() {
-        if (this.$attrs.ngChange) {
-            this.$scope.$eval(this.$attrs.ngChange);
-        }
-
         this.ngModelController.$setViewValue(this.values);
     }
 
@@ -456,7 +457,8 @@ export abstract class SliderComponentController implements IComponentController,
  * @param {SliderAlgorithm=} algorithm The algorithm, by default linear, the slider will use. Feel free to write your own as long as it conforms to the shape.
  * @param {boolean=} snap Controls the slider's snapping behavior.
  * @param {number[]=} snapPoints An array of values on the slider where the slider should snap to.
- * @param {number[]} pitPoints As the set of points at which it will render a pit. Points are an array of values on the slider.
+ * @param {number[]=} pitPoints As the set of points at which it will render a pit. Points are an array of values on the slider.
+ * @param {expression=} ngChange NgChange hook.
  *
  * @param {function()=} onSliderDragStart
  * @param {function()=} onSliderDragMove
