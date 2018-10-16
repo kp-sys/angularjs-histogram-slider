@@ -1,10 +1,12 @@
 export default class DemoController {
+    public sliderModel = [20, 30];
 
-    constructor() {
+    /*@ngInject*/
+    constructor(private $log) {
         //
     }
 
     public change() {
-        console.log('Value changed');
+        this.$log.log('Value changed');
     }
 }

@@ -51,7 +51,7 @@ export abstract class SliderComponentController implements IComponentController,
     private handleDimensions: number;
     private handlePositions: number[];
     private slidingIndex: number;
-    private sliderModelControllers: [SliderModelComponentController];
+    private sliderModelControllers: SliderModelComponentController[] = [];
     private endSlideListener: () => void;
     private handleMouseSlideListener: (event) => void;
 
@@ -71,6 +71,12 @@ export abstract class SliderComponentController implements IComponentController,
         this.min = this.min || 1;
         this.max = this.max || 100;
         this.values = this.values || [1];
+
+        if (this.sliderModelControllers.length === 0 && this.ngModelController) {
+            this.ngModelController.$render = () => {
+                this.updateValues(this.ngModelController.$modelValue);
+            };
+        }
 
         this.orientation = this.orientation || HORIZONTAL;
         this.algorithm = this.algorithm || new LinearAlgorithm();
@@ -156,6 +162,15 @@ export abstract class SliderComponentController implements IComponentController,
         const newValues = this.values.slice();
         newValues[index] = newValue;
 
+        const nextValues = this.validateValues(newValues);
+
+        this.handlePositions = nextValues.map((value) => this.algorithm.getPosition(value, this.min, this.max));
+        this.values = nextValues;
+
+        this.onValuesUpdated({$values: this.values.slice()});
+    }
+
+    private updateValues(newValues: number[]) {
         const nextValues = this.validateValues(newValues);
 
         this.handlePositions = nextValues.map((value) => this.algorithm.getPosition(value, this.min, this.max));
