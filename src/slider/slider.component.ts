@@ -56,7 +56,7 @@ export abstract class SliderComponentController implements IComponentController,
     private handleMouseSlideListener: (event) => void;
 
     /*@ngInject*/
-    constructor($document: IDocumentService, private $attrs: IAttributes, private $scope: IScope, private $log) {
+    constructor($document: IDocumentService, private $attrs: IAttributes, private $scope: IScope) {
         this.document = $document[0];
         this.endSlideListener = () => this.endSlide();
         this.handleMouseSlideListener = (event) => this.handleMouseSlide(event);
@@ -162,12 +162,7 @@ export abstract class SliderComponentController implements IComponentController,
         const newValues = this.values.slice();
         newValues[index] = newValue;
 
-        const nextValues = this.validateValues(newValues);
-
-        this.handlePositions = nextValues.map((value) => this.algorithm.getPosition(value, this.min, this.max));
-        this.values = nextValues;
-
-        this.onValuesUpdated({$values: this.values.slice()});
+        this.updateValues(newValues);
     }
 
     private updateValues(newValues: number[]) {
@@ -176,7 +171,9 @@ export abstract class SliderComponentController implements IComponentController,
         this.handlePositions = nextValues.map((value) => this.algorithm.getPosition(value, this.min, this.max));
         this.values = nextValues;
 
-        this.onValuesUpdated({$values: this.values.slice()});
+        if (this.onValuesUpdated) {
+            this.onValuesUpdated({$values: this.values.slice()});
+        }
     }
 
     public handleClick(event: MouseEvent) {
