@@ -73,9 +73,9 @@ export abstract class SliderComponentController implements IComponentController,
         this.values = this.values || [1];
 
         if (this.sliderModelControllers.length === 0 && this.ngModelController) {
-            this.ngModelController.$render = () => {
-                this.updateValues(this.ngModelController.$modelValue);
-            };
+            this.ngModelController.$render = function ngModelRenderFunction() {
+                this.updateValues(this.ngModelController.$viewValue);
+            }.bind(this);
         }
 
         this.orientation = this.orientation || HORIZONTAL;

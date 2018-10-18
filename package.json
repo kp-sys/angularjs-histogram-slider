@@ -1,6 +1,6 @@
 {
     "name": "angularjs-histogram-slider",
-    "version": "1.1.1",
+    "version": "1.1.3",
     "repository": "https://github.com/DostalTomas/angularjs-histogram-slider.git",
     "dependencies": {
         "angular": "latest",
