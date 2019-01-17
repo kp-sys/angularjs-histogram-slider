@@ -16,6 +16,14 @@
     "publishConfig": {
         "access": "public"
     },
+    "files": [
+        "demo",
+        "dist",
+        "src",
+        "webpack.demo.config.js",
+        "webpack.module.config.js",
+        "tsconfig.json"
+    ],
     "devDependencies": {
         "@babel/core": "latest",
         "@types/angular": "latest",
