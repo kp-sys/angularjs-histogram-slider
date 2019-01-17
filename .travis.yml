@@ -21,3 +21,4 @@ deploy:
   provider: npm
   email: "tomas.dostal@kpsys.cz"
   api_key: $NPM_TOKEN
+  skip_cleanup: true
