@@ -1,6 +1,6 @@
 {
     "name": "@kpsys/angularjs-histogram-slider",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "author": {
         "email": "tomas.dostal@kpsys.cz",
         "name": "Tomas Dostal"
@@ -16,10 +16,13 @@
     "publishConfig": {
         "access": "public"
     },
+    "directories": {
+        "lib": "src/"
+    },
     "files": [
-        "demo",
-        "dist",
-        "src",
+        "demo/",
+        "dist/",
+        "src/",
         "webpack.demo.config.js",
         "webpack.module.config.js",
         "tsconfig.json"
