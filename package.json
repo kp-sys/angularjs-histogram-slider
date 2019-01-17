@@ -1,6 +1,6 @@
 {
     "name": "@kpsys/angularjs-histogram-slider",
-    "version": "1.1.6",
+    "version": "1.1.7",
     "author": {
         "email": "tomas.dostal@kpsys.cz",
         "name": "Tomas Dostal"
@@ -12,6 +12,7 @@
         "angularjs-register": "github:DostalTomas/angularjs-register"
     },
     "main": "dist/slider.js",
+    "style": "dist/slider.css",
     "license": "MIT",
     "publishConfig": {
         "access": "public"
