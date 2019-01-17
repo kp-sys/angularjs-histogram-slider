@@ -1,0 +1,3 @@
+This component is AngularJS adaptation of [https://github.com/airbnb/rheostat]().
+
+More info maybe later...

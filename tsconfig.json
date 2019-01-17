@@ -1,11 +1,11 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "esnext",
+        "target": "es5",
         "sourceMap": true,
-        "allowJs": true,
         "experimentalDecorators": true,
-        "baseUrl": "."
+        "baseUrl": ".",
+        "declaration": false
     },
     "exclude": [
         "node_modules",
