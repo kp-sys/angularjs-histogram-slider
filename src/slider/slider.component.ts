@@ -397,11 +397,11 @@ export abstract class SliderComponentController implements IComponentController,
             Math.min(
                 nextPosition,
                 this.handlePositions[idx + 1] !== undefined
-                    ? this.handlePositions[idx + 1] - handlePercentage
+                    ? this.handlePositions[idx + 1] // - handlePercentage = kolik % zabira handle
                     : PERCENT_FULL, // 100% is the highest value
             ),
             this.handlePositions[idx - 1] !== undefined
-                ? this.handlePositions[idx - 1] + handlePercentage
+                ? this.handlePositions[idx - 1] // + handlePercentage
                 : PERCENT_EMPTY, // 0% is the lowest value
         );
     }
