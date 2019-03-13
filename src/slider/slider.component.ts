@@ -25,7 +25,7 @@ interface Rect {
 
 const HANDLE_SET_EVENT = 'handleSet';
 
-function getHandleFor(event: MouseEvent) {
+function getHandleFor(event: MouseEvent | TouchEvent) {
     return Number((event.currentTarget as Element).getAttribute('data-handle-key'));
 }
 
@@ -54,12 +54,14 @@ export abstract class SliderComponentController implements IComponentController,
     private sliderModelControllers: SliderModelComponentController[] = [];
     private endSlideListener: () => void;
     private handleMouseSlideListener: (event) => void;
+    private handleTouchSlideListener: (event) => void;
 
     /*@ngInject*/
     constructor($document: IDocumentService, private $attrs: IAttributes, private $scope: IScope) {
         this.document = $document[0];
         this.endSlideListener = () => this.endSlide();
         this.handleMouseSlideListener = (event) => this.handleMouseSlide(event);
+        this.handleTouchSlideListener = (event) => this.handleTouchSlide(event);
     }
 
     public set setHandleNode(value: IAugmentedJQuery) {
@@ -124,6 +126,23 @@ export abstract class SliderComponentController implements IComponentController,
         destroyEvent($event);
     }
 
+    public startTouchSlide($event: TouchEvent) {
+        if ($event.changedTouches.length > 1) {
+            return;
+        }
+
+        this.setStartSlide($event);
+
+        document.addEventListener('touchend', this.endSlideListener, false);
+        document.addEventListener('touchmove', this.handleTouchSlideListener, false);
+
+        if (this.onSliderDragStart) {
+            this.onSliderDragStart();
+        }
+
+        destroyEvent($event);
+    }
+
     public getProgressStyle(idx: number) {
         const value = this.handlePositions[idx];
 
@@ -165,17 +184,6 @@ export abstract class SliderComponentController implements IComponentController,
         this.updateValues(newValues);
     }
 
-    private updateValues(newValues: number[]) {
-        const nextValues = this.validateValues(newValues);
-
-        this.handlePositions = nextValues.map((value) => this.algorithm.getPosition(value, this.min, this.max));
-        this.values = nextValues;
-
-        if (this.onValuesUpdated) {
-            this.onValuesUpdated({$values: this.values.slice()});
-        }
-    }
-
     public handleClick(event: MouseEvent) {
         if ((event.target as Element).getAttribute('data-handle-key')) {
             return;
@@ -203,9 +211,18 @@ export abstract class SliderComponentController implements IComponentController,
         }
     }
 
-    private setStartSlide(event: MouseEvent) {
-        // const sliderBox = this.getSliderBoundingBox();
+    private updateValues(newValues: number[]) {
+        const nextValues = this.validateValues(newValues);
 
+        this.handlePositions = nextValues.map((value) => this.algorithm.getPosition(value, this.min, this.max));
+        this.values = nextValues;
+
+        if (this.onValuesUpdated) {
+            this.onValuesUpdated({$values: this.values.slice()});
+        }
+    }
+
+    private setStartSlide(event: MouseEvent | TouchEvent) {
         this.handleDimensions = this.getHandleDimension();
         this.slidingIndex = getHandleFor(event);
     }

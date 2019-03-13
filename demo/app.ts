@@ -1,5 +1,5 @@
 import 'angular';
-import register from 'angularjs-register';
+import register from '@kpsys/angularjs-register';
 // @ts-ignore
 import sliderModule from '../dist/slider';
 import '../dist/slider.css';

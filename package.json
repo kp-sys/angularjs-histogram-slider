@@ -1,16 +1,12 @@
 {
     "name": "@kpsys/angularjs-histogram-slider",
-    "version": "1.1.8",
+    "version": "1.2.0",
     "author": {
         "email": "tomas.dostal@kpsys.cz",
         "name": "Tomas Dostal"
     },
     "description": "AngularJS adaptation of https://github.com/airbnb/rheostat",
     "repository": "https://github.com/DostalTomas/angularjs-histogram-slider.git",
-    "dependencies": {
-        "angular": "latest",
-        "angularjs-register": "github:DostalTomas/angularjs-register"
-    },
     "main": "dist/slider.js",
     "style": "dist/slider.css",
     "license": "MIT",
@@ -28,31 +24,40 @@
         "webpack.module.config.js",
         "tsconfig.json"
     ],
+    "peerDependencies": {
+        "angular": "latest",
+        "@kpsys/angularjs-register": "1.x"
+    },
+    "dependencies": {
+        "ngtouchstart": "^1.0.1"
+    },
     "devDependencies": {
         "@babel/core": "latest",
+        "@kpsys/angularjs-register": "latest",
         "@types/angular": "latest",
         "@types/node": "latest",
+        "angular": "latest",
         "babel-loader": "next",
         "babel-plugin-angularjs-annotate": "latest",
         "babel-preset-env": "next",
-        "html-loader": "latest",
         "clean-webpack-plugin": "latest",
         "css-loader": "latest",
         "extract-text-webpack-plugin": "next",
+        "html-loader": "latest",
+        "html-webpack-plugin": "latest",
         "less": "latest",
         "less-loader": "latest",
+        "ngtemplate-loader": "latest",
         "pug-html-loader": "latest",
         "source-map-loader": "^0.2.4",
         "style-loader": "latest",
-        "ngtemplate-loader": "latest",
         "ts-loader": "latest",
         "tslint": "latest",
         "tslint-loader": "latest",
         "typescript": "latest",
         "webpack": "latest",
         "webpack-cli": "latest",
-        "webpack-dev-server": "latest",
-        "html-webpack-plugin": "latest"
+        "webpack-dev-server": "latest"
     },
     "scripts": {
         "lib:prod": "webpack --config webpack.module.config.js --mode production --progress",
