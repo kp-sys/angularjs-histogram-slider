@@ -1,67 +1,99 @@
 {
-    "name": "@kpsys/angularjs-histogram-slider",
-    "version": "1.2.0",
-    "author": {
-        "email": "tomas.dostal@kpsys.cz",
-        "name": "Tomas Dostal"
-    },
-    "description": "AngularJS adaptation of https://github.com/airbnb/rheostat",
-    "repository": "https://github.com/DostalTomas/angularjs-histogram-slider.git",
-    "main": "dist/slider.js",
-    "style": "dist/slider.css",
-    "license": "MIT",
-    "publishConfig": {
-        "access": "public"
-    },
-    "directories": {
-        "lib": "src/"
-    },
-    "files": [
-        "demo/",
-        "dist/",
-        "src/",
-        "webpack.demo.config.js",
-        "webpack.module.config.js",
-        "tsconfig.json"
-    ],
-    "peerDependencies": {
-        "angular": "latest",
-        "@kpsys/angularjs-register": "1.x"
-    },
-    "dependencies": {
-        "ngtouchstart": "^1.0.1"
-    },
-    "devDependencies": {
-        "@babel/core": "latest",
-        "@kpsys/angularjs-register": "latest",
-        "@types/angular": "latest",
-        "@types/node": "latest",
-        "angular": "latest",
-        "babel-loader": "next",
-        "babel-plugin-angularjs-annotate": "latest",
-        "babel-preset-env": "next",
-        "clean-webpack-plugin": "latest",
-        "css-loader": "latest",
-        "extract-text-webpack-plugin": "next",
-        "html-loader": "latest",
-        "html-webpack-plugin": "latest",
-        "less": "latest",
-        "less-loader": "latest",
-        "ngtemplate-loader": "latest",
-        "pug-html-loader": "latest",
-        "source-map-loader": "^0.2.4",
-        "style-loader": "latest",
-        "ts-loader": "latest",
-        "tslint": "latest",
-        "tslint-loader": "latest",
-        "typescript": "latest",
-        "webpack": "latest",
-        "webpack-cli": "latest",
-        "webpack-dev-server": "latest"
-    },
-    "scripts": {
-        "lib:prod": "webpack --config webpack.module.config.js --mode production --progress",
-        "lib:devel": "webpack --config webpack.module.config.js --mode development --watch --progress",
-        "demo": "webpack-dev-server --config webpack.demo.config.js --progress"
-    }
+  "name": "@kpsys/angularjs-histogram-slider",
+  "version": "1.2.1",
+  "author": {
+    "email": "tomas.dostal@kpsys.cz",
+    "name": "Tomas Dostal"
+  },
+  "description": "AngularJS adaptation of https://github.com/airbnb/rheostat",
+  "repository": "https://github.com/DostalTomas/angularjs-histogram-slider.git",
+  "main": "dist/slider.js",
+  "style": "dist/slider.css",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "directories": {
+    "lib": "src/"
+  },
+  "files": [
+    "demo/",
+    "dist/",
+    "src/",
+    "webpack.demo.config.js",
+    "webpack.library.config.js",
+    "tsconfig.json"
+  ],
+  "browserslist": [
+    "last 2 versions and > 1% and not ie < 11"
+  ],
+  "peerDependencies": {
+    "angular": "latest",
+    "@kpsys/angularjs-register": "1.x"
+  },
+  "dependencies": {
+    "ngtouchstart": "^1.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "latest",
+    "@babel/preset-env": "latest",
+    "@kpsys/angularjs-register": "latest",
+    "@types/angular": "latest",
+    "@types/node": "latest",
+    "angular": "latest",
+    "babel-loader": "next",
+    "babel-plugin-angularjs-annotate": "latest",
+    "clean-webpack-plugin": "latest",
+    "css-loader": "latest",
+    "dgeni": "latest",
+    "dgeni-alive": "latest",
+    "grunt": "latest",
+    "grunt-cli": "latest",
+    "grunt-contrib-copy": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-extract-comments": "latest",
+    "html-loader": "latest",
+    "html-webpack-plugin": "latest",
+    "http-server": "latest",
+    "istanbul": "latest",
+    "istanbul-instrumenter-loader": "latest",
+    "jasmine": "latest",
+    "jasmine-core": "latest",
+    "karma": "latest",
+    "karma-chrome-launcher": "latest",
+    "karma-cli": "latest",
+    "karma-coverage-istanbul-reporter": "latest",
+    "karma-jasmine": "latest",
+    "karma-source-map-support": "latest",
+    "karma-sourcemap-loader": "latest",
+    "karma-spec-reporter": "latest",
+    "karma-webpack": "^4.0.0-rc.6",
+    "less": "latest",
+    "less-loader": "latest",
+    "mini-css-extract-plugin": "latest",
+    "ngtemplate-loader": "latest",
+    "pug-html-loader": "latest",
+    "source-map-loader": "^0.2.4",
+    "style-loader": "latest",
+    "ts-loader": "latest",
+    "tslint": "latest",
+    "tslint-loader": "latest",
+    "typescript": "latest",
+    "unminified-webpack-plugin": "latest",
+    "webpack": "latest",
+    "webpack-cli": "latest",
+    "webpack-dev-server": "latest",
+    "webpack-shell-plugin": "latest",
+    "write-file-webpack-plugin": "latest"
+  },
+  "scripts": {
+    "lib:prod": "webpack --config webpack.library.config.js --mode production --progress",
+    "lib:devel": "webpack --config webpack.library.config.js --mode development --watch --progress",
+    "lib:profile": "webpack --config webpack.library.config.js --mode production --progress --profiloe --json > reports/build-statistics.json",
+    "demo": "webpack-dev-server --config webpack.demo.config.js --progress",
+    "docs:build": "grunt docs:build",
+    "docs:watch": "grunt docs:watch",
+    "docs:serve": "http-server docs -p 3001 ",
+    "test": "karma start test/karma.conf.js"
+  }
 }

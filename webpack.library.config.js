@@ -1,34 +1,27 @@
 const path = require('path');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-module.exports = {
+module.exports = (env, {mode}) => ({
     mode: 'none',
 
-    entry: {
+    entry: mode === 'production' ? {
+        'slider.min': ['./src/slider/slider.module.ts']
+    } : {
         'slider': ['./src/slider/slider.module.ts']
     },
 
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].js',
-        library: 'Slider',
+        library: 'histogram-slider',
         libraryTarget: 'umd'
     },
 
     externals: {
-        angular: {
-            commonjs: 'angular',
-            commonjs2: 'angular',
-            amd: 'angular',
-            root: 'angular'
-        },
-        'angularjs-register': {
-            commonjs: 'angularjs-register',
-            commonjs2: 'angularjs-register',
-            amd: 'angularjs-register',
-            root: 'angularjs-register'
-        }
+        angular: 'angular',
+        '@kpsys/angularjs-register': '@kpsys/angularjs-register'
     },
 
     module: {
@@ -50,17 +43,7 @@ module.exports = {
                                 'angularjs-annotate'
                             ],
                             presets: [
-                                [
-                                    'env',
-                                    {
-                                        'targets': {
-                                            'browsers': [
-                                                'last 2 versions',
-                                                'not ie < 11 '
-                                            ]
-                                        }
-                                    }
-                                ]
+                                '@babel/preset-env'
                             ]
                         }
                     },
@@ -74,23 +57,23 @@ module.exports = {
             },
             {
                 test: /(\.less$)|(\.css$)/,
-                use: ExtractTextPlugin.extract({
-                    use: [
-                        {
-                            loader: 'css-loader',
-                            options: {
-                                sourceMap: true
-                            }
-                        },
-                        {
-                            loader: 'less-loader',
-                            options: {
-                                sourceMap: true
-                            }
+                use: [
+                    {
+                        loader: MiniCssExtractPlugin.loader
+                    },
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            sourceMap: true
                         }
-                    ],
-                    fallback: 'style-loader'
-                })
+                    },
+                    {
+                        loader: 'less-loader',
+                        options: {
+                            sourceMap: true
+                        }
+                    }
+                ]
             },
             {
                 test: /\.tpl.pug/,
@@ -119,10 +102,16 @@ module.exports = {
     optimization: {
         splitChunks: {
             cacheGroups: {
-                vendors: {
-                    test: isVendor,
+                jsVendors: {
+                    test: isJsVendor,
                     name: 'vendors',
                     chunks: 'all'
+                },
+                cssVendors: {
+                    test: isCssVendor,
+                    name: 'vendors',
+                    chunks: 'all',
+                    enforce: true
                 }
             }
         }
@@ -130,21 +119,35 @@ module.exports = {
 
     devtool: 'source-map',
 
-    plugins: [
-        new ExtractTextPlugin({filename: '[name].css', disable: false, allChunks: true}),
-        new CleanWebpackPlugin(
-            ['dist/*.*'],
-            {
-                root: path.resolve(__dirname),
-                verbose: true,
-                exclude: ['.gitkeep']
-            }
-        )
-    ]
-};
+    plugins: (function () {
+        const plugins = [
+            new MiniCssExtractPlugin({
+                filename: '[name].css'
+            }),
+            new CleanWebpackPlugin(
+                ['dist/*.*'],
+                {
+                    root: path.resolve(__dirname),
+                    verbose: true,
+                    exclude: ['.gitkeep']
+                }
+            )];
+        if (mode === 'production') {
+            plugins.push(new UnminifiedWebpackPlugin());
+        }
 
-function isVendor({resource}) {
+        return plugins;
+    })()
+});
+
+function isJsVendor({resource}) {
     return resource &&
         resource.indexOf('node_modules') >= 0 &&
         resource.match(/.js$/);
+}
+
+function isCssVendor({resource}) {
+    return resource &&
+        resource.indexOf('node_modules') >= 0 &&
+        resource.match(/.css$/);
 }
