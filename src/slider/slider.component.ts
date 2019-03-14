@@ -126,8 +126,8 @@ export abstract class SliderComponentController implements IComponentController,
         destroyEvent($event);
     }
 
-    public startTouchSlide($event: TouchEvent) {
-        if ($event.changedTouches.length > 1) {
+    public startTouchSlide($event) {
+        if (($event.originalEvent || $event).changedTouches.length > 1) {
             return;
         }
 
