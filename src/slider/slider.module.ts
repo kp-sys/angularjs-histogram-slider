@@ -1,5 +1,5 @@
 import register from '@kpsys/angularjs-register';
-import TouchStartDirective from './touchstart.directive';
+import TouchStartDirective from './touch-start.directive';
 import SliderComponent from './slider.component';
 import SliderModelComponent from './slider-model.component';
 
