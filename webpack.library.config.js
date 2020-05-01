@@ -1,5 +1,6 @@
 const path = require('path');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const pkg = require('./package.json');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -15,7 +16,7 @@ module.exports = (env, {mode}) => ({
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].js',
-        library: 'histogram-slider',
+        library: pkg.name,
         libraryTarget: 'umd'
     },
 
@@ -124,14 +125,10 @@ module.exports = (env, {mode}) => ({
             new MiniCssExtractPlugin({
                 filename: '[name].css'
             }),
-            new CleanWebpackPlugin(
-                ['dist/*.*'],
-                {
-                    root: path.resolve(__dirname),
-                    verbose: true,
-                    exclude: ['.gitkeep']
-                }
-            )];
+            new CleanWebpackPlugin({
+                verbose: true,
+                cleanStaleWebpackAssets: false
+            })];
         if (mode === 'production') {
             plugins.push(new UnminifiedWebpackPlugin());
         }
