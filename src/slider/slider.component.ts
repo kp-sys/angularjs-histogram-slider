@@ -42,7 +42,7 @@ export abstract class SliderComponentController implements IComponentController,
     public algorithm: SliderAlgorithm;
     public snap: boolean;
     public snapPoints: number[];
-    public pitStyleCache: Array<{ top?: string, left?: string, position: string }>;
+    public pitStyleCache: { top?: string, left?: string, position: string }[];
     public pitPoints: number[];
     private ngModelController: INgModelController;
     private document: HTMLDocument;
